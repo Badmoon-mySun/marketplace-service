@@ -3,6 +3,7 @@ package ru.demo.marketplaceservice.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.demo.marketplaceservice.entity.Order;
 
@@ -19,4 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAllByBuyerEmail(String buyerEmail, Pageable pageable);
     Page<Order> findAllByCreatedAtIsBetween(Calendar start, Calendar end, Pageable pageable);
     Page<Order> findAllByCreatedAtAfter(Calendar date, Pageable pageable);
+
+    @Query("select ord from Order ord left join ord.products prod where prod.vendorCode = :vendorCode")
+    Page<Order> findAllByProductVendorCode(Long vendorCode, Pageable pageable);
 }

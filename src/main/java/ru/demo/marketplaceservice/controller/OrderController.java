@@ -57,11 +57,16 @@ public class OrderController {
     }
 
     @GetMapping("/date")
-    public Page<OrderDto> date(
+    public Page<OrderDto> filterByDate(
             @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date from,
             @RequestParam(required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") Date to,
             Pageable pageable) {
 
         return orderService.filterOrdersByDate(from, to, pageable);
+    }
+
+    @GetMapping("/vendor")
+    public Page<OrderDto> filterByVendorCode(@RequestParam Long vendorCode, Pageable pageable) {
+        return orderService.getOrdersByVendorCode(vendorCode, pageable);
     }
 }

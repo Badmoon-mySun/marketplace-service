@@ -19,4 +19,5 @@ public interface OrderService {
     void deleteOrderById(Long id);
     Page<OrderDto> getOrdersByBuyerEmail(String buyerEmail, Pageable pageable);
     Page<OrderDto> filterOrdersByDate(Date from, Date to, Pageable pageable);
+    Page<OrderDto> getOrdersByVendorCode(Long vendorCode, Pageable pageable);
 }

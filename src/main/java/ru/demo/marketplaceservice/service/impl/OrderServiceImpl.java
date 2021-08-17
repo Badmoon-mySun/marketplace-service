@@ -125,6 +125,12 @@ public class OrderServiceImpl implements OrderService {
         return orders.map(order -> modelMapper.map(order, OrderDto.class));
     }
 
+    @Override
+    public Page<OrderDto> getOrdersByVendorCode(Long vendorCode, Pageable pageable) {
+        Page<Order> orders = orderRepository.findAllByProductVendorCode(vendorCode, pageable);
+        return orders.map(order -> modelMapper.map(order, OrderDto.class));
+    }
+
     private List<Product> getCleanProducts(List<ProductDto> productDtos) {
         Set<Long> productIds = productDtos.stream()
                 .map(ProductDto::getId).collect(Collectors.toSet());
