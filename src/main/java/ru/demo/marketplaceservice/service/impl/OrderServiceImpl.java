@@ -1,7 +1,6 @@
 package ru.demo.marketplaceservice.service.impl;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -102,6 +101,27 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<OrderDto> getOrdersByBuyerEmail(String buyerEmail, Pageable pageable) {
         Page<Order> orders = orderRepository.findAllByBuyerEmail(buyerEmail, pageable);
+        return orders.map(order -> modelMapper.map(order, OrderDto.class));
+    }
+
+    @Override
+    public Page<OrderDto> filterOrdersByDate(Date from, Date to, Pageable pageable) {
+        if (from == null)
+            throw new IllegalArgumentException("From date cannot be null");
+
+        Calendar dateStart = Calendar.getInstance();
+        dateStart.setTimeInMillis(from.getTime());
+
+        Page<Order> orders;
+        if (to != null) {
+            Calendar dateEnd = Calendar.getInstance();
+            dateEnd.setTimeInMillis(to.getTime());
+
+            orders = orderRepository.findAllByCreatedAtIsBetween(dateStart, dateEnd, pageable);
+        } else {
+            orders = orderRepository.findAllByCreatedAtAfter(dateStart, pageable);
+        }
+
         return orders.map(order -> modelMapper.map(order, OrderDto.class));
     }
 

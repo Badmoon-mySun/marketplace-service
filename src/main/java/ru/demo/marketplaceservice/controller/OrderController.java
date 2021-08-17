@@ -32,7 +32,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public Page<OrderDto> allOrders(@RequestParam(required = false) String buyerEmail, Pageable pageable) {
+    public Page<OrderDto> allOrders(@RequestParam(required = false) String buyerEmail,
+                                    Pageable pageable) {
         if (StringUtils.hasText(buyerEmail))
             return orderService.getOrdersByBuyerEmail(buyerEmail, pageable);
 
@@ -55,10 +56,12 @@ public class OrderController {
         orderService.deleteOrderById(id);
     }
 
-    @GetMapping("/filter")
-    public List<OrderDto> filter(@RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date from,
-                                 @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date to,
-                                 @RequestParam Integer vendorCode) {
-        return null;
+    @GetMapping("/date")
+    public Page<OrderDto> date(
+            @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date from,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") Date to,
+            Pageable pageable) {
+
+        return orderService.filterOrdersByDate(from, to, pageable);
     }
 }
