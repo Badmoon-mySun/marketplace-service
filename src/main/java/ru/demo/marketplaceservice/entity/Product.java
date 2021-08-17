@@ -30,7 +30,7 @@ public class Product {
     @Column(length = 100, nullable = false)
     private String currency;
 
-    private Integer vendorCode;
+    private Long vendorCode;
 
     private Boolean deleted;
 
