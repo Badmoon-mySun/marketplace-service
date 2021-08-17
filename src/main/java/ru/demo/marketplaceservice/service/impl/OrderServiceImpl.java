@@ -7,13 +7,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.demo.marketplaceservice.dto.OrderCreateForm;
 import ru.demo.marketplaceservice.dto.OrderDto;
+import ru.demo.marketplaceservice.dto.ProductDto;
 import ru.demo.marketplaceservice.entity.Order;
+import ru.demo.marketplaceservice.entity.Product;
 import ru.demo.marketplaceservice.exception.NotFoundException;
 import ru.demo.marketplaceservice.repository.OrderRepository;
+import ru.demo.marketplaceservice.repository.ProductRepository;
 import ru.demo.marketplaceservice.service.OrderService;
 
-import java.util.Calendar;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Anvar Khasanov
@@ -26,9 +29,13 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
-    public OrderServiceImpl(ModelMapper modelMapper, OrderRepository orderRepository) {
+    private final ProductRepository productRepository;
+
+    public OrderServiceImpl(ModelMapper modelMapper, OrderRepository orderRepository,
+                            ProductRepository productRepository) {
         this.modelMapper = modelMapper;
         this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -46,13 +53,53 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto createOrder(OrderCreateForm orderCreateForm) {
-        Order order = modelMapper.map(orderCreateForm, Order.class);
-
         Calendar date = Calendar.getInstance();
-        order.setCreatedAt(date);
-        order.setOrderNumber(date.hashCode());
+
+        Order order = Order.builder()
+                .createdAt(date)
+                .orderNumber(date.hashCode())
+                .products(getCleanProducts(orderCreateForm.getProducts()))
+                .build();
 
         order = orderRepository.save(order);
         return modelMapper.map(order, OrderDto.class);
+    }
+
+    @Override
+    public OrderDto updateOrder(OrderDto orderDto) {
+        Order order = orderRepository.findById(orderDto.getId())
+                .orElseThrow(() -> new NotFoundException("Order for update don't found"));
+
+        List<Product> products = getCleanProducts(orderDto.getProducts());
+
+        Order updatedOrder = modelMapper.map(orderDto, Order.class);
+        updatedOrder.setProducts(order.getProducts());
+        order = orderRepository.save(updatedOrder);
+
+        List<Product> difference = new ArrayList<>(order.getProducts());
+
+        Order finalOrder = order;
+        difference.removeAll(products);
+        difference.forEach(product -> product.getOrders().remove(finalOrder));
+
+        difference.addAll(products);
+        difference.removeAll(order.getProducts());
+        difference.forEach(product -> product.getOrders().add(finalOrder));
+
+        order.setProducts(products);
+
+        return modelMapper.map(order, OrderDto.class);
+    }
+
+    @Override
+    public void deleteOrderById(Long id) {
+        orderRepository.deleteById(id);
+    }
+
+    private List<Product> getCleanProducts(List<ProductDto> productDtos) {
+        Set<Long> productIds = productDtos.stream()
+                .map(ProductDto::getId).collect(Collectors.toSet());
+
+        return productRepository.findAllById(productIds);
     }
 }

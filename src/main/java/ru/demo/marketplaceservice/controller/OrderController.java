@@ -3,6 +3,7 @@ package ru.demo.marketplaceservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.demo.marketplaceservice.dto.OrderCreateForm;
 import ru.demo.marketplaceservice.dto.OrderDto;
@@ -22,7 +23,7 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{id}")
-    public OrderDto orderById(@PathVariable Long id) {
+    public OrderDto getOne(@PathVariable Long id) {
         return orderService.getOrderById(id);
     }
 
@@ -32,7 +33,18 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderDto create(@Valid OrderCreateForm orderCreateForm) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDto create(@RequestBody @Valid OrderCreateForm orderCreateForm) {
         return orderService.createOrder(orderCreateForm);
+    }
+
+    @PutMapping
+    public OrderDto update(@RequestBody @Valid OrderDto orderDto) {
+        return orderService.updateOrder(orderDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        orderService.deleteOrderById(id);
     }
 }

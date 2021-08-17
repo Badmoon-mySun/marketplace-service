@@ -14,4 +14,6 @@ public interface OrderService {
     OrderDto getOrderById(Long id);
     Page<OrderDto> getOrders(Pageable pageable);
     OrderDto createOrder(OrderCreateForm orderCreateForm);
+    OrderDto updateOrder(OrderDto orderDto);
+    void deleteOrderById(Long id);
 }
