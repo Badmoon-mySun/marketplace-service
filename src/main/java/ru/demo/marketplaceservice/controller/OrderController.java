@@ -1,16 +1,14 @@
 package ru.demo.marketplaceservice.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.demo.marketplaceservice.dto.OrderCreateForm;
 import ru.demo.marketplaceservice.dto.OrderDto;
-import ru.demo.marketplaceservice.entity.Order;
 import ru.demo.marketplaceservice.service.OrderService;
+
+import javax.validation.Valid;
 
 /**
  * @author Anvar Khasanov
@@ -28,8 +26,13 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
-    @GetMapping ("/all")
+    @GetMapping
     public Page<OrderDto> allOrders(Pageable pageable) {
         return orderService.getOrders(pageable);
+    }
+
+    @PostMapping
+    public OrderDto create(@Valid OrderCreateForm orderCreateForm) {
+        return orderService.createOrder(orderCreateForm);
     }
 }
