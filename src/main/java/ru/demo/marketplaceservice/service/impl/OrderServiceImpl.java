@@ -10,6 +10,7 @@ import ru.demo.marketplaceservice.dto.ProductDto;
 import ru.demo.marketplaceservice.entity.Order;
 import ru.demo.marketplaceservice.entity.Product;
 import ru.demo.marketplaceservice.exception.NotFoundException;
+import ru.demo.marketplaceservice.exception.OrderCreationException;
 import ru.demo.marketplaceservice.repository.OrderRepository;
 import ru.demo.marketplaceservice.repository.ProductRepository;
 import ru.demo.marketplaceservice.service.OrderService;
@@ -52,12 +53,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto createOrder(OrderCreateForm orderCreateForm) {
-        Calendar date = Calendar.getInstance();
+        List<Product> products = getCleanProducts(orderCreateForm.getProducts());
+        products.forEach(product -> {
+            if (product.getDeleted())
+                throw new OrderCreationException("You can't create order with deleted product!");
+        });
 
+        Calendar date = Calendar.getInstance();
         Order order = Order.builder()
                 .createdAt(date)
                 .orderNumber(date.hashCode())
-                .products(getCleanProducts(orderCreateForm.getProducts())) // TODO if products deleted
+                .products(products)
                 .build();
 
         order = orderRepository.save(order);

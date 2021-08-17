@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.demo.marketplaceservice.exception.NotFoundException;
+import ru.demo.marketplaceservice.exception.OrderCreationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +35,20 @@ public class AdviceController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public Map<String, String> handleValidationExceptions(NotFoundException exception) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("code", "404");
-        errors.put("msg", exception.getMessage());
+        Map<String, String> messages = new HashMap<>();
+        messages.put("code", "404");
+        messages.put("msg", exception.getMessage());
 
-        return errors;
+        return messages;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(OrderCreationException.class)
+    public Map<String, String> handleValidationExceptions(OrderCreationException exception) {
+        Map<String, String> messages = new HashMap<>();
+        messages.put("code", "400");
+        messages.put("msg", exception.getMessage());
+
+        return messages;
     }
 }
