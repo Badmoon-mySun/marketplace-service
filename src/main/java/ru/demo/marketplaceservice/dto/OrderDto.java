@@ -2,6 +2,7 @@ package ru.demo.marketplaceservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.demo.marketplaceservice.entity.Product;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @author Anvar Khasanov
  * student of ITIS KFU
  */
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

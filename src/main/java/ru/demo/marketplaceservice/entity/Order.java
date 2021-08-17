@@ -18,6 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "marketplace_order")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
