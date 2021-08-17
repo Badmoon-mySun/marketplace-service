@@ -3,13 +3,17 @@ package ru.demo.marketplaceservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.demo.marketplaceservice.dto.OrderCreateForm;
 import ru.demo.marketplaceservice.dto.OrderDto;
 import ru.demo.marketplaceservice.service.OrderService;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Anvar Khasanov
@@ -28,7 +32,10 @@ public class OrderController {
     }
 
     @GetMapping
-    public Page<OrderDto> allOrders(Pageable pageable) {
+    public Page<OrderDto> allOrders(@RequestParam(required = false) String buyerEmail, Pageable pageable) {
+        if (StringUtils.hasText(buyerEmail))
+            return orderService.getOrdersByBuyerEmail(buyerEmail, pageable);
+
         return orderService.getOrders(pageable);
     }
 
@@ -46,5 +53,12 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         orderService.deleteOrderById(id);
+    }
+
+    @GetMapping("/filter")
+    public List<OrderDto> filter(@RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date from,
+                                 @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date to,
+                                 @RequestParam Integer vendorCode) {
+        return null;
     }
 }

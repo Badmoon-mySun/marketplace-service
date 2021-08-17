@@ -93,7 +93,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrderById(Long id) {
-        orderRepository.deleteById(id);
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Order with id " + id + " not found"));
+
+        orderRepository.delete(order);
+    }
+
+    @Override
+    public Page<OrderDto> getOrdersByBuyerEmail(String buyerEmail, Pageable pageable) {
+        Page<Order> orders = orderRepository.findAllByBuyerEmail(buyerEmail, pageable);
+        return orders.map(order -> modelMapper.map(order, OrderDto.class));
     }
 
     private List<Product> getCleanProducts(List<ProductDto> productDtos) {
