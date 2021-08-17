@@ -61,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
 
         Calendar date = Calendar.getInstance();
         Order order = Order.builder()
+                .buyerEmail(orderCreateForm.getBuyerEmail())
                 .createdAt(date)
                 .orderNumber(date.hashCode())
                 .products(products)
