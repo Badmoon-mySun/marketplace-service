@@ -71,18 +71,23 @@ public class OrderServiceImpl implements OrderService {
 
         List<Product> products = getCleanProducts(orderDto.getProducts());
 
+        // Обновляем поля заказ кроме продуктов
         Order updatedOrder = modelMapper.map(orderDto, Order.class);
         updatedOrder.setProducts(order.getProducts());
         order = orderRepository.save(updatedOrder);
 
         List<Product> difference = new ArrayList<>(order.getProducts());
 
+        // Находим разницу множества продуктов заказа и обновленного заказа
         Order finalOrder = order;
         difference.removeAll(products);
+        // Удаление продуктов, которых нет в обновленном заказе
         difference.forEach(product -> product.getOrders().remove(finalOrder));
 
+        // Находим разницу множества продуктов обновленного заказа и старого заказа
         difference.addAll(products);
         difference.removeAll(order.getProducts());
+        // Добавление продуктов, которые есть в обновленном заказе
         difference.forEach(product -> product.getOrders().add(finalOrder));
 
         order.setProducts(products);
