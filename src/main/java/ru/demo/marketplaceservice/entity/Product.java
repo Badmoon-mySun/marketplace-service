@@ -28,6 +28,9 @@ public class Product {
     @Column(precision = 2, nullable = false)
     private Double price;
 
+    @Column(length = 100, nullable = false)
+    private String currency;
+
     private Integer vendorCode;
 
     private Boolean deleted;
