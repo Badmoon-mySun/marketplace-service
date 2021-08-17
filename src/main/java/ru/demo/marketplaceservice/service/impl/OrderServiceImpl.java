@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .createdAt(date)
                 .orderNumber(date.hashCode())
-                .products(getCleanProducts(orderCreateForm.getProducts()))
+                .products(getCleanProducts(orderCreateForm.getProducts())) // TODO if products deleted
                 .build();
 
         order = orderRepository.save(order);
