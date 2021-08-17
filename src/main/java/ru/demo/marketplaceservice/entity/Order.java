@@ -1,9 +1,6 @@
 package ru.demo.marketplaceservice.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Calendar;
@@ -18,6 +15,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"products"})
+@ToString(exclude = {"products"})
 @Table(name = "marketplace_order")
 public class Order {
     @Id

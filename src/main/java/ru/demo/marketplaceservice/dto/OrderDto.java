@@ -22,5 +22,5 @@ public class OrderDto {
     private Integer orderNumber;
     private String buyerEmail;
     private Calendar createdAt;
-    private List<Product> products;
+    private List<ProductDto> products;
 }
